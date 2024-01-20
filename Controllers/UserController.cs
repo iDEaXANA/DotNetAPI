@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using DotnetAPI.Data;
+using DotnetAPI.Models;
+using DotnetAPI.DTOs;
 
 namespace DotnetAPI.Controllers;
 [ApiController]
