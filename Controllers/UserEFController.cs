@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
 using DotnetAPI.Data;
-using DotnetAPI.Models;
 using DotnetAPI.DTOs;
+using DotnetAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetAPI.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class UserEFController : ControllerBase

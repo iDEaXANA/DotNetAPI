@@ -22,7 +22,7 @@ namespace DotnetAPI.Data
             {
                 optionsBuilder
                     .UseSqlServer(_config.GetConnectionString("DefaultConnection"),
-                        optionsBuilder => options.EnableRetryOnFailure());
+                        optionsBuilder => optionsBuilder.EnableRetryOnFailure());
             }
         }
 
