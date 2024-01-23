@@ -124,11 +124,5 @@ public class UserController : ControllerBase
 
     }
 
-
-    //!! 
-    //!!
-    //!! UserSalary
-    //!!
-    //!!
 }
 
