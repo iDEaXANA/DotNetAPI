@@ -26,8 +26,7 @@ public class UserSalaryController : ControllerBase
     {
         string sql = @"
                 SELECT [UserId],
-                    [Salary],
-                    [AvgSalary]
+                    [Salary]
                 FROM TutorialAppSchema.UserSalary";
         IEnumerable<UserSalary> UserSalaries = _dapper.LoadData<UserSalary>(sql);
         return UserSalaries;
@@ -39,8 +38,7 @@ public class UserSalaryController : ControllerBase
     {
         string sql = @"
                 SELECT [UserId],
-                    [Salary],
-                    [AvgSalary]
+                    [Salary]
                 FROM TutorialAppSchema.UserSalary
                     WHERE UserId = " + userId.ToString();
         UserSalary userSalary = _dapper.LoadDataSingle<UserSalary>(sql);
@@ -53,7 +51,6 @@ public class UserSalaryController : ControllerBase
         string sql = @"
             UPDATE TutorialAppSchema.UserSalary
                 SET [Salary] = '" + UserSalary.Salary +
-                "', [AvgSalary] = '" + UserSalary.AvgSalary +
             "' WHERE UserId = " + UserSalary.UserId;
 
         if (_dapper.ExecuteSql(sql))
@@ -69,11 +66,9 @@ public class UserSalaryController : ControllerBase
     public IActionResult AddUserSalary(UserSalaryToAddDTO UserSalary)
     {
         string sql = @"INSERT INTO TutorialAppSchema.UserSalary(
-                    [Salary],
-                    [AvgSalary]
+                    [Salary]
                 ) VALUES (" +
                 "'" + UserSalary.Salary +
-                "', '" + UserSalary.AvgSalary +
             "')";
 
         if (_dapper.ExecuteSql(sql))
