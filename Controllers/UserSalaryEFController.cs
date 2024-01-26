@@ -59,7 +59,7 @@ public class UserSalaryEFController : ControllerBase
 
         if (userDb != null)
         {
-            userDb.Salary = usersalary.Salary;
+            userDb.Salary = usersalary.Salary; // Map it from usersalary to userDb
             if (_entityFramework.SaveChanges() > 0)
             {
                 return Ok();
@@ -70,12 +70,12 @@ public class UserSalaryEFController : ControllerBase
         throw new Exception("Failed to Get User's Salary");
     }
 
-    [HttpPost("AddUserSalary")]
-    public IActionResult AddUserSalary(UserSalaryToAddDTO usersalary)
+    [HttpPost("AddUserSalary")] // Looks like he left PRIMARY KEY out and used base model instead. Only DTO = UserDTO.
+    public IActionResult AddUserSalary(UserSalary usersalary)
     {
-        UserSalary userDb = _mapper.Map<UserSalary>(usersalary);
+        // UserSalary userDb = _mapper.Map<UserSalary>(usersalary);
 
-        _entityFramework.Add(userDb);
+        _entityFramework.Add(usersalary);
         if (_entityFramework.SaveChanges() > 0)
         {
             return Ok();

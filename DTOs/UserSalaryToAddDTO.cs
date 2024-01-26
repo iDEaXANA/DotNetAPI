@@ -5,3 +5,5 @@ namespace DotnetAPI.DTOs
         public decimal Salary { get; set; }
     }
 }
+
+// THIS FILE IS NOT NEEDED.

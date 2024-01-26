@@ -71,7 +71,7 @@ public class UserSalaryController : ControllerBase
                 "'" + UserSalary.Salary +
             "')";
 
-        if (_dapper.ExecuteSql(sql))
+        if (_dapper.ExecuteSqlWithRowCount(sql) > 0)
         {
             return Ok();
         }
