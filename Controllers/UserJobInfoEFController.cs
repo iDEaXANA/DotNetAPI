@@ -8,25 +8,25 @@ namespace DotnetAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserEFController : ControllerBase
+public class UserJobInfoEFController : ControllerBase
 {
     DataContextEF _entityFramework;
     IMapper _mapper;
-    public UserEFController(IConfiguration config)
+    public UserJobInfoEFController(IConfiguration config)
     {
         _entityFramework = new DataContextEF(config);
 
         _mapper = new Mapper(new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<UserToAddDTO, User>();
+            cfg.CreateMap<UserJobInfoToAddDTO, UserJobInfo>();
         }));
     }
 
-    [HttpGet("GetUsers")]
-    public IEnumerable<User> GetUsers() // string[] can be replaced with IActionResult
+    [HttpGet("GetUserJobInfos")]
+    public IEnumerable<UserJobInfo> GetUsers() // string[] can be replaced with IActionResult
     {
-        IEnumerable<User> users = _entityFramework.Users.ToList<User>();
-        return users;
+        IEnumerable<UserJobInfo> UserJobInfos = _entityFramework.UserJobInfo.ToList<UserJobInfo>();
+        return UserJobInfos;
         // string[] responseArray = new string[] {
         //     "test1",
         //     "test2",
@@ -35,77 +35,74 @@ public class UserEFController : ControllerBase
         // return new OkObjectResult(responseArray); //Use ok()
     }
 
-    [HttpGet("GetSingleUser/{userId}")]
-    public User GetSingleUser(int userId)
+    [HttpGet("GetSingleUserJobInfo/{userId}")]
+    public UserJobInfo GetSingleUserJobInfo(int userId)
     {
 
-        User? user = _entityFramework.Users
+        UserJobInfo? UserJobInfos = _entityFramework.UserJobInfo
             .Where(u => u.UserId == userId) // sql equiv. 
-            .FirstOrDefault<User>();
+            .FirstOrDefault<UserJobInfo>();
 
-        if (user != null)
+        if (UserJobInfos != null)
         {
-            return user;
+            return UserJobInfos;
         }
-        throw new Exception("Failed to Get User");
+        throw new Exception("Failed to Get User's Job Info");
     }
 
-    [HttpPut("EditUser")]
-    public IActionResult EditUser(User user)
+    [HttpPut("EditUserJobInfo")]
+    public IActionResult EditUserJobInfo(UserJobInfo userJobInfo)
     {
-        User? userDb = _entityFramework.Users
-            .Where(u => u.UserId == user.UserId) // sql equiv. 
-            .FirstOrDefault<User>();
+        UserJobInfo? userDb = _entityFramework.UserJobInfo
+            .Where(u => u.UserId == userJobInfo.UserId) // sql equiv. 
+            .FirstOrDefault<UserJobInfo>();
 
         if (userDb != null)
         {
-            userDb.Active = user.Active;
-            userDb.FirstName = user.FirstName;
-            userDb.LastName = user.LastName;
-            userDb.Email = user.Email;
-            userDb.Gender = user.Gender;
+            userDb.JobTitle = userJobInfo.JobTitle;
+            userDb.Department = userJobInfo.Department;
             if (_entityFramework.SaveChanges() > 0)
             {
                 return Ok();
             }
-            throw new Exception("Failed to Update User");
+            throw new Exception("Failed to Update User's Job Info");
         }
 
-        throw new Exception("Failed to Get User");
+        throw new Exception("Failed to Get the User's Job Info.");
     }
 
-    [HttpPost("AddUser")]
-    public IActionResult AddUser(UserToAddDTO user)
+    [HttpPost("AddUserJobInfo")]
+    public IActionResult AddUserJobInfo(UserJobInfoToAddDTO userJobInfo)
     {
-        User userDb = _mapper.Map<User>(user);
+        UserJobInfo userDb = _mapper.Map<UserJobInfo>(userJobInfo);
 
         _entityFramework.Add(userDb);
         if (_entityFramework.SaveChanges() > 0)
         {
             return Ok();
         }
-        throw new Exception("Failed to Add User");
+        throw new Exception("Failed to Add User's Job Info");
 
     }
 
-    [HttpDelete("DeleteUser/{userId}")]
-    public IActionResult DeleteUser(int userId)
+    [HttpDelete("DeleteUserJobInfo/{userId}")]
+    public IActionResult DeleteUserJobInfo(int userId)
     {
-        User? userDb = _entityFramework.Users
+        UserJobInfo? userDb = _entityFramework.UserJobInfo
            .Where(u => u.UserId == userId) // sql equiv. 
-           .FirstOrDefault<User>();
+           .FirstOrDefault<UserJobInfo>();
 
         if (userDb != null)
         {
-            _entityFramework.Users.Remove(userDb);
+            _entityFramework.UserJobInfo.Remove(userDb);
             if (_entityFramework.SaveChanges() > 0)
             {
                 return Ok();
             }
-            throw new Exception("Failed to Update User");
+            throw new Exception("Failed to Update User's Job Info");
         }
 
-        throw new Exception("Failed to Get User");
+        throw new Exception("Failed to Get User's Job Info");
 
     }
 }

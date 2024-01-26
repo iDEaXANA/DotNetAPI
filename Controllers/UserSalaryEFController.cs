@@ -8,25 +8,25 @@ namespace DotnetAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserEFController : ControllerBase
+public class UserSalaryEFController : ControllerBase
 {
     DataContextEF _entityFramework;
     IMapper _mapper;
-    public UserEFController(IConfiguration config)
+    public UserSalaryEFController(IConfiguration config)
     {
         _entityFramework = new DataContextEF(config);
 
         _mapper = new Mapper(new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<UserToAddDTO, User>();
+            cfg.CreateMap<UserSalaryToAddDTO, UserSalary>();
         }));
     }
 
-    [HttpGet("GetUsers")]
-    public IEnumerable<User> GetUsers() // string[] can be replaced with IActionResult
+    [HttpGet("GetUserSalaries")]
+    public IEnumerable<UserSalary> GetUsers() // string[] can be replaced with IActionResult
     {
-        IEnumerable<User> users = _entityFramework.Users.ToList<User>();
-        return users;
+        IEnumerable<UserSalary> Usersalaries = _entityFramework.UserSalary.ToList<UserSalary>();
+        return Usersalaries;
         // string[] responseArray = new string[] {
         //     "test1",
         //     "test2",
@@ -35,78 +35,74 @@ public class UserEFController : ControllerBase
         // return new OkObjectResult(responseArray); //Use ok()
     }
 
-    [HttpGet("GetSingleUser/{userId}")]
-    public User GetSingleUser(int userId)
+    [HttpGet("GetSingleUserSalary/{userId}")]
+    public UserSalary GetSingleUserSalary(int userId)
     {
 
-        User? user = _entityFramework.Users
+        UserSalary? usersalary = _entityFramework.UserSalary
             .Where(u => u.UserId == userId) // sql equiv. 
-            .FirstOrDefault<User>();
+            .FirstOrDefault<UserSalary>();
 
-        if (user != null)
+        if (usersalary != null)
         {
-            return user;
+            return usersalary;
         }
-        throw new Exception("Failed to Get User");
+        throw new Exception("Failed to Get User's Salary");
     }
 
-    [HttpPut("EditUser")]
-    public IActionResult EditUser(User user)
+    [HttpPut("EditUserSalary")]
+    public IActionResult EditUserSalary(UserSalary usersalary)
     {
-        User? userDb = _entityFramework.Users
-            .Where(u => u.UserId == user.UserId) // sql equiv. 
-            .FirstOrDefault<User>();
+        UserSalary? userDb = _entityFramework.UserSalary
+            .Where(u => u.UserId == usersalary.UserId) // sql equiv. 
+            .FirstOrDefault<UserSalary>();
 
         if (userDb != null)
         {
-            userDb.Active = user.Active;
-            userDb.FirstName = user.FirstName;
-            userDb.LastName = user.LastName;
-            userDb.Email = user.Email;
-            userDb.Gender = user.Gender;
+            userDb.Salary = usersalary.Salary;
             if (_entityFramework.SaveChanges() > 0)
             {
                 return Ok();
             }
-            throw new Exception("Failed to Update User");
+            throw new Exception("Failed to Update User's Salary");
         }
 
-        throw new Exception("Failed to Get User");
+        throw new Exception("Failed to Get User's Salary");
     }
 
-    [HttpPost("AddUser")]
-    public IActionResult AddUser(UserToAddDTO user)
+    [HttpPost("AddUserSalary")]
+    public IActionResult AddUserSalary(UserSalaryToAddDTO usersalary)
     {
-        User userDb = _mapper.Map<User>(user);
+        UserSalary userDb = _mapper.Map<UserSalary>(usersalary);
 
         _entityFramework.Add(userDb);
         if (_entityFramework.SaveChanges() > 0)
         {
             return Ok();
         }
-        throw new Exception("Failed to Add User");
+        throw new Exception("Failed to Add User's Salary");
 
     }
 
-    [HttpDelete("DeleteUser/{userId}")]
-    public IActionResult DeleteUser(int userId)
+    [HttpDelete("DeleteUserSalary/{userId}")]
+    public IActionResult DeleteUserSalary(int userId)
     {
-        User? userDb = _entityFramework.Users
+        UserSalary? userDb = _entityFramework.UserSalary
            .Where(u => u.UserId == userId) // sql equiv. 
-           .FirstOrDefault<User>();
+           .FirstOrDefault<UserSalary>();
 
         if (userDb != null)
         {
-            _entityFramework.Users.Remove(userDb);
+            _entityFramework.UserSalary.Remove(userDb);
             if (_entityFramework.SaveChanges() > 0)
             {
                 return Ok();
             }
-            throw new Exception("Failed to Update User");
+            throw new Exception("Failed to Update Users Salary");
         }
 
-        throw new Exception("Failed to Get User");
+        throw new Exception("Failed to Get Users Salary");
 
     }
 }
-
+// cba to delete all the unneccessary apostrophes in the Exceptions.
