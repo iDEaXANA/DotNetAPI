@@ -14,11 +14,11 @@ public class UserController : ControllerBase
         _dapper = new DataContextDapper(config);
     }
 
-    [HttpGet("TestConnection")]
-    public DateTime TestConnection()
-    {
-        return _dapper.LoadDataSingle<DateTime>("SELECT GETDATE()");
-    }
+    // [HttpGet("TestConnection")]
+    // public DateTime TestConnection()
+    // {
+    //     return _dapper.LoadDataSingle<DateTime>("SELECT GETDATE()");
+    // }
 
     [HttpGet("GetUsers")]
     public IEnumerable<User> GetUsers() // string[] can be replaced with IActionResult
@@ -105,6 +105,7 @@ public class UserController : ControllerBase
         throw new Exception("Failed to Add User");
     }
 
+
     [HttpDelete("DeleteUser/{userId}")]
     public IActionResult DeleteUser(int userId)
     {
@@ -122,5 +123,6 @@ public class UserController : ControllerBase
         throw new Exception("Failed to Delete User");
 
     }
+
 }
 
