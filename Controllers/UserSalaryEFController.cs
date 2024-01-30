@@ -60,7 +60,7 @@ public class UserSalaryEFController : ControllerBase
         if (userDb != null)
         {
             userDb.Salary = usersalary.Salary; // Map it from usersalary to userDb
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -76,7 +76,7 @@ public class UserSalaryEFController : ControllerBase
         // UserSalary userDb = _mapper.Map<UserSalary>(usersalary);
 
         _entityFramework.Add(usersalary);
-        if (_entityFramework.SaveChanges() > 0)
+        if (_userRepository.SaveChanges()
         {
             return Ok();
         }
@@ -94,7 +94,7 @@ public class UserSalaryEFController : ControllerBase
         if (userDb != null)
         {
             _entityFramework.UserSalary.Remove(userDb);
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }

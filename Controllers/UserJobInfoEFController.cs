@@ -61,7 +61,7 @@ public class UserJobInfoEFController : ControllerBase
         {
             userDb.JobTitle = userJobInfo.JobTitle;
             userDb.Department = userJobInfo.Department;
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -77,7 +77,7 @@ public class UserJobInfoEFController : ControllerBase
         UserJobInfo userDb = _mapper.Map<UserJobInfo>(userJobInfo);
 
         _entityFramework.Add(userDb);
-        if (_entityFramework.SaveChanges() > 0)
+        if (_userRepository.SaveChanges())
         {
             return Ok();
         }
@@ -95,7 +95,7 @@ public class UserJobInfoEFController : ControllerBase
         if (userDb != null)
         {
             _entityFramework.UserJobInfo.Remove(userDb);
-            if (_entityFramework.SaveChanges() > 0)
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
