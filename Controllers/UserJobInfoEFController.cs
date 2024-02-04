@@ -10,92 +10,67 @@ namespace DotnetAPI.Controllers;
 [Route("[controller]")]
 public class UserJobInfoEFController : ControllerBase
 {
-    DataContextEF _entityFramework;
+    IUserRepository _userRepository;
     IMapper _mapper;
-    public UserJobInfoEFController(IConfiguration config)
+    public UserJobInfoEFController(IConfiguration config, IUserRepository userRepository)
     {
-        _entityFramework = new DataContextEF(config);
+        _userRepository = userRepository;
 
         _mapper = new Mapper(new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<UserJobInfoToAddDTO, UserJobInfo>();
+            cfg.CreateMap<UserJobInfo, UserJobInfo>().ReverseMap();
+
         }));
     }
 
-    [HttpGet("GetUserJobInfos")]
-    public IEnumerable<UserJobInfo> GetUsers() // string[] can be replaced with IActionResult
+    [HttpGet("GetUserJobInfo/{userId}")]
+    public UserJobInfo GetUserJobInfoEF(int userId)
     {
-        IEnumerable<UserJobInfo> UserJobInfos = _entityFramework.UserJobInfo.ToList<UserJobInfo>();
-        return UserJobInfos;
-        // string[] responseArray = new string[] {
-        //     "test1",
-        //     "test2",
-        //     testValue
-        // };
-        // return new OkObjectResult(responseArray); //Use ok()
-    }
-
-    [HttpGet("GetSingleUserJobInfo/{userId}")]
-    public UserJobInfo GetSingleUserJobInfo(int userId)
-    {
-
-        UserJobInfo? UserJobInfos = _entityFramework.UserJobInfo
-            .Where(u => u.UserId == userId) // sql equiv. 
-            .FirstOrDefault<UserJobInfo>();
-
-        if (UserJobInfos != null)
-        {
-            return UserJobInfos;
-        }
-        throw new Exception("Failed to Get User's Job Info");
-    }
-
-    [HttpPut("EditUserJobInfo")]
-    public IActionResult EditUserJobInfo(UserJobInfo userJobInfo)
-    {
-        UserJobInfo? userDb = _entityFramework.UserJobInfo
-            .Where(u => u.UserId == userJobInfo.UserId) // sql equiv. 
-            .FirstOrDefault<UserJobInfo>();
-
-        if (userDb != null)
-        {
-            userDb.JobTitle = userJobInfo.JobTitle;
-            userDb.Department = userJobInfo.Department;
-            if (_entityFramework.SaveChanges() > 0)
-            {
-                return Ok();
-            }
-            throw new Exception("Failed to Update User's Job Info");
-        }
-
-        throw new Exception("Failed to Get the User's Job Info.");
+        return _userRepository.GetSingleUserJobInfo(userId);
     }
 
     [HttpPost("AddUserJobInfo")]
-    public IActionResult AddUserJobInfo(UserJobInfoToAddDTO userJobInfo)
+    public IActionResult PostUserJobInfoEF(UserJobInfo userForInsert)
     {
-        UserJobInfo userDb = _mapper.Map<UserJobInfo>(userJobInfo);
+        _userRepository.AddEntity<UserJobInfo>(userForInsert);
 
-        _entityFramework.Add(userDb);
-        if (_entityFramework.SaveChanges() > 0)
+        if (_userRepository.SaveChanges())
         {
             return Ok();
         }
-        throw new Exception("Failed to Add User's Job Info");
+        throw new Exception("Adding Process failed on save");
 
     }
 
-    [HttpDelete("DeleteUserJobInfo/{userId}")]
-    public IActionResult DeleteUserJobInfo(int userId)
+    [HttpPut("UserJobInfo")]
+    public IActionResult PutUserJobInfoEF(UserJobInfo userForUpdate)
     {
-        UserJobInfo? userDb = _entityFramework.UserJobInfo
-           .Where(u => u.UserId == userId) // sql equiv. 
-           .FirstOrDefault<UserJobInfo>();
+        UserJobInfo? userToUpdate = _userRepository.GetSingleUserJobInfo(userForUpdate.UserId);
 
-        if (userDb != null)
+        if (userToUpdate != null)
         {
-            _entityFramework.UserJobInfo.Remove(userDb);
-            if (_entityFramework.SaveChanges() > 0)
+            _mapper.Map(userForUpdate, userToUpdate);
+            if (_userRepository.SaveChanges())
+            {
+                return Ok();
+            }
+            throw new Exception("Updating process failed on save");
+        }
+
+        throw new Exception("Failed to find userJobInfo to Update");
+    }
+
+
+
+    [HttpDelete("UserJobInfo/{userId}")]
+    public IActionResult DeleteUserJobInfoEF(int userId)
+    {
+        UserJobInfo? userToDelete = _userRepository.GetSingleUserJobInfo(userId);
+
+        if (userToDelete != null)
+        {
+            _userRepository.RemoveEntity<UserJobInfo>(userToDelete);
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }

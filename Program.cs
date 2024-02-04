@@ -1,3 +1,5 @@
+using DotnetAPI.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -27,6 +29,8 @@ builder.Services.AddCors((options) =>
         });
     });
 
+builder.Services.AddScoped<IUserRepository, UserRepository>(); //--!! DOUBLE CHECK!
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -41,13 +45,17 @@ else
     app.UseCors("ProdCors");
     app.UseHttpsRedirection(); // More secure method but no need whilst dev
 }
+
+app.UseAuthorization();
+
 app.MapControllers();
 
+app.Run();
 // app.MapGet("/weatherforecast", () =>
 // {
 // })
 // .WithName("GetWeatherForecast")
 // .WithOpenApi();
 
-app.Run();
+
 
