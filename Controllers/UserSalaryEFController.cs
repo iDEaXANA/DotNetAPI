@@ -10,73 +10,33 @@ namespace DotnetAPI.Controllers;
 [Route("[controller]")]
 public class UserSalaryEFController : ControllerBase
 {
-    DataContextEF _entityFramework;
+    IUserRepository _userRepository;
     IMapper _mapper;
-    public UserSalaryEFController(IConfiguration config)
+    public UserSalaryEFController(IConfiguration config, IUserRepository userRepository)
     {
-        _entityFramework = new DataContextEF(config);
+        _userRepository = userRepository;
 
         _mapper = new Mapper(new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<UserSalaryToAddDTO, UserSalary>();
+            cfg.CreateMap<UserSalary, UserSalary>().ReverseMap();
         }));
     }
 
-    [HttpGet("GetUserSalaries")]
-    public IEnumerable<UserSalary> GetUsers() // string[] can be replaced with IActionResult
-    {
-        IEnumerable<UserSalary> Usersalaries = _entityFramework.UserSalary.ToList<UserSalary>();
-        return Usersalaries;
-        // string[] responseArray = new string[] {
-        //     "test1",
-        //     "test2",
-        //     testValue
-        // };
-        // return new OkObjectResult(responseArray); //Use ok()
-    }
-
     [HttpGet("GetSingleUserSalary/{userId}")]
-    public UserSalary GetSingleUserSalary(int userId)
+    public UserSalary GetSingleUserSalaryEF(int userId)
     {
 
-        UserSalary? usersalary = _entityFramework.UserSalary
-            .Where(u => u.UserId == userId) // sql equiv. 
-            .FirstOrDefault<UserSalary>();
-
-        if (usersalary != null)
-        {
-            return usersalary;
-        }
-        throw new Exception("Failed to Get User's Salary");
+        return _userRepository.GetSingleUserSalary(userId);
     }
 
-    [HttpPut("EditUserSalary")]
-    public IActionResult EditUserSalary(UserSalary usersalary)
-    {
-        UserSalary? userDb = _entityFramework.UserSalary
-            .Where(u => u.UserId == usersalary.UserId) // sql equiv. 
-            .FirstOrDefault<UserSalary>();
 
-        if (userDb != null)
-        {
-            userDb.Salary = usersalary.Salary; // Map it from usersalary to userDb
-            if (_userRepository.SaveChanges())
-            {
-                return Ok();
-            }
-            throw new Exception("Failed to Update User's Salary");
-        }
-
-        throw new Exception("Failed to Get User's Salary");
-    }
-
-    [HttpPost("AddUserSalary")] // Looks like he left PRIMARY KEY out and used base model instead. Only DTO = UserDTO.
-    public IActionResult AddUserSalary(UserSalary usersalary)
+    [HttpPost("UserSalary")] // Looks like he left PRIMARY KEY out and used base model instead. Only DTO = UserDTO.
+    public IActionResult PostUserSalaryEF(UserSalary userToInsert)
     {
         // UserSalary userDb = _mapper.Map<UserSalary>(usersalary);
 
-        _entityFramework.Add(usersalary);
-        if (_userRepository.SaveChanges()
+        _userRepository.AddEntity<UserSalary>(userToInsert);
+        if (_userRepository.SaveChanges())
         {
             return Ok();
         }
@@ -84,24 +44,42 @@ public class UserSalaryEFController : ControllerBase
 
     }
 
-    [HttpDelete("DeleteUserSalary/{userId}")]
-    public IActionResult DeleteUserSalary(int userId)
+    [HttpPut("UserSalary")]
+    public IActionResult PutUserSalaryEF(UserSalary userForUpdate)
     {
-        UserSalary? userDb = _entityFramework.UserSalary
-           .Where(u => u.UserId == userId) // sql equiv. 
-           .FirstOrDefault<UserSalary>();
+        UserSalary? userToUpdate = _userRepository.GetSingleUserSalary(userForUpdate.UserId); // find HTTP Value against db and store it in userToUpdate
 
-        if (userDb != null)
+        if (userToUpdate != null)
         {
-            _entityFramework.UserSalary.Remove(userDb);
+            _mapper.Map(userForUpdate, userToUpdate); // Map HTTP value to Db.
             if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
-            throw new Exception("Failed to Update Users Salary");
+            throw new Exception("Updating process failed on save");
         }
 
-        throw new Exception("Failed to Get Users Salary");
+        throw new Exception("Failed to Find User Salary to Update");
+    }
+
+
+
+    [HttpDelete("UserSalary/{userId}")]
+    public IActionResult DeleteUserSalaryEF(int userId)
+    {
+        UserSalary? userToDelete = _userRepository.GetSingleUserSalary(userId);
+
+        if (userToDelete != null)
+        {
+            _userRepository.RemoveEntity<UserSalary>(userToDelete);
+            if (_userRepository.SaveChanges())
+            {
+                return Ok();
+            }
+            throw new Exception("Deleting process failed on save");
+        }
+
+        throw new Exception("Failed to Find User Salary to Delete");
 
     }
 }
