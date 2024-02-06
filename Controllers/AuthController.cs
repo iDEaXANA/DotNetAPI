@@ -19,7 +19,14 @@ namespace DotnetAPI.Controllers
         {
             if (userForRegistration.Password == userForRegistration.PasswordConfirm)
             {
-                return Ok();
+                string sqlCheckUserExists = "SELECT * FROM TutorialAppSchema.Auth WHERE Email = '" +
+                userForRegistration.Email + "'";
+                IEnumerable<string> existingUsers = _dapper.LoadData<string>(sqlCheckUserExists);
+                if (existingUsers.Count() == 0)
+                {
+                    return Ok();
+                }
+                throw new Exception("User with this email already exists");
             }
             throw new Exception("Passwords do not match");
         }
