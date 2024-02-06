@@ -1,9 +1,9 @@
 namespace DotnetAPI.DTOs
 {
-    partial class UserForLoginDTO
+    public partial class UserForLoginDTO
     {
         // Check that the details are correct. e.g Typos.
-        string Email { get; set; } = "";
-        string Password { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 }
