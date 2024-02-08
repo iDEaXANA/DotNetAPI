@@ -30,6 +30,7 @@ namespace DotnetAPI.Controllers
                 string sqlCheckUserExists = "SELECT * FROM TutorialAppSchema.Auth WHERE Email = '" +
                 userForRegistration.Email + "'";
                 IEnumerable<string> existingUsers = _dapper.LoadData<string>(sqlCheckUserExists);
+
                 if (existingUsers.Count() == 0)
                 {
                     byte[] passwordSalt = new byte[128 / 8];

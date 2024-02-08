@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetAPI", "DotnetAPI.csproj", "{EA744A74-EBD6-4C05-8A5D-42C243C54A8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetAPI Unit Tests", "DotNetAPI Unit Tests\DotNetAPI Unit Tests.csproj", "{027BAE3F-CF79-4AF6-A51C-A0F5ACCD72C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EA744A74-EBD6-4C05-8A5D-42C243C54A8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA744A74-EBD6-4C05-8A5D-42C243C54A8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA744A74-EBD6-4C05-8A5D-42C243C54A8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{027BAE3F-CF79-4AF6-A51C-A0F5ACCD72C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{027BAE3F-CF79-4AF6-A51C-A0F5ACCD72C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{027BAE3F-CF79-4AF6-A51C-A0F5ACCD72C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{027BAE3F-CF79-4AF6-A51C-A0F5ACCD72C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
