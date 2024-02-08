@@ -2,8 +2,8 @@ namespace DotnetAPI.DTOs
 {
     public partial class UserJobInfoToAddDTO
     {
-        public string JobTitle { get; set; } = "";
-        public string Department { get; set; } = "";
+        public string JobTitle { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
     }
 }
 
