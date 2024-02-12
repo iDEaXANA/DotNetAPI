@@ -147,7 +147,7 @@ namespace DotnetAPI.Controllers
             //     Encoding.UTF8.GetBytes(
             //         _config.GetSection("Appsettings:TokenKey").Value)); // only takes byte values
 
-            string? tokenKeyString = _config.GetSection("AppSettings:Token").Value;
+            string? tokenKeyString = _config.GetSection("AppSettings:TokenKey").Value;
 
             SymmetricSecurityKey tokenKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
