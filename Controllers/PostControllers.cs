@@ -4,6 +4,7 @@ using DotnetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute; // ??
 
 namespace DotnetAPI.Controllers
 {
@@ -79,7 +80,7 @@ namespace DotnetAPI.Controllers
         public IActionResult AddPost(PostToAddDTO postToAdd)
         {   // PostId is removed as it is auto generated.
             string sql = @"
-            INSERT INTO TutorialAppSchmea.Posts(, 
+            INSERT INTO TutorialAppSchmea.Posts( 
                 [UserId],
                 [PostTitle],
                 [PostContent],
@@ -88,6 +89,45 @@ namespace DotnetAPI.Controllers
                 + ",'" + postToAdd.PostTitle
                 + "','" + postToAdd.PostContent
                 + "', GETDATE(), GETDATE() )";
+
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to create new post");
+        }
+
+        [HttpPut("Post")]
+        public IActionResult EditPost(PostToEditDTO postToEdit)
+        {   // PostId is removed as it is auto generated.
+            string sql = @"
+            UPDATE TutorialAppSchema.Posts 
+                SET PostTitle = '" + postToEdit.PostTitle +
+                "', PostContent = '" + postToEdit.PostContent +
+                @"', PostUpdated GETDATE()
+                WHERE PostId = " + postToEdit.PostId.ToString() +
+                "AND UserId =" + this.User.FindFirst("userId")?.Value;
+
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to edit post");
+        }
+
+        [HttpDelete("Post/{postId}")]
+        public IActionResult DeletePost(int postId)
+        {
+            string sql = @"DELETE FROM TutorialAppSchema.Posts
+                WHERE PostId = " + postId.ToString();
+
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+            throw new Exception("Failed to delete post");
         }
     }
 }
