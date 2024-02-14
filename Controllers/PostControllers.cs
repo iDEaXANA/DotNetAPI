@@ -20,7 +20,7 @@ namespace DotnetAPI.Controllers
             _dapper = new DataContextDapper(config);
         }
 
-        [HttpGet("Post")]
+        [HttpGet("Posts")]
         public IEnumerable<Post> GetPosts()
         {
             string sql = @"SELECT [PostId],
