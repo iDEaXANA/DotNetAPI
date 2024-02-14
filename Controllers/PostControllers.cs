@@ -80,7 +80,7 @@ namespace DotnetAPI.Controllers
         public IActionResult AddPost(PostToAddDTO postToAdd)
         {   // PostId is removed as it is auto generated.
             string sql = @"
-            INSERT INTO TutorialAppSchmea.Posts( 
+            INSERT INTO TutorialAppSchema.Posts( 
                 [UserId],
                 [PostTitle],
                 [PostContent],
