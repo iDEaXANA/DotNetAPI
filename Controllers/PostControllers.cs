@@ -34,7 +34,7 @@ namespace DotnetAPI.Controllers
         }
 
         [HttpGet("PostSingle/{postId}")]
-        public IEnumerable<Post> GetPostSingle(int postId) // Route Paramaters
+        public Post GetPostSingle(int postId) // Route Paramaters
         {
             string sql = @"SELECT [PostId],
                     [UserId],
@@ -44,7 +44,7 @@ namespace DotnetAPI.Controllers
                     [PostUpdated] 
                 FROM TutorialAppSchema.Posts
                     WHERE PostId = " + postId.ToString();
-            return _dapper.LoadData<Post>(sql);
+            return _dapper.LoadDataSingle<Post>(sql);
         }
 
         [HttpGet("PostsByUser/{userId}")] // All posts for a single user
@@ -57,7 +57,23 @@ namespace DotnetAPI.Controllers
                     [PostCreated],
                     [PostUpdated] 
                 FROM TutorialAppSchema.Posts
-                    WHERE PostId = " + userId.ToString();
+                    WHERE UserId = " + userId.ToString();
+            return _dapper.LoadData<Post>(sql);
+        }
+
+        [HttpGet("PostsBySearch/{searchParam}")]
+        public IEnumerable<Post> PostsBySearch(string searchParam) // Route Paramaters
+        {
+            string sql = @"SELECT [PostId],
+                    [UserId],
+                    [PostTitle],
+                    [PostContent],
+                    [PostCreated],
+                    [PostUpdated] 
+                FROM TutorialAppSchema.Posts
+                    WHERE PostTitle LIKE '%" + searchParam + "%'" +
+                        " OR PostContent LIKE '%" + searchParam + "%'";
+
             return _dapper.LoadData<Post>(sql);
         }
 
@@ -71,7 +87,7 @@ namespace DotnetAPI.Controllers
                     [PostCreated],
                     [PostUpdated] 
                 FROM TutorialAppSchema.Posts
-                    WHERE PostId = " + this.User.FindFirst("userId")?.Value;
+                    WHERE UserId = " + this.User.FindFirst("userId")?.Value;
 
             return _dapper.LoadData<Post>(sql);
         }
@@ -88,7 +104,7 @@ namespace DotnetAPI.Controllers
                 [PostUpdated]) VALUES (" + this.User.FindFirst("userId")?.Value
                 + ",'" + postToAdd.PostTitle
                 + "','" + postToAdd.PostContent
-                + "', GETDATE(), GETDATE() )";
+                + "', GETDATE(), GETDATE())";
 
             if (_dapper.ExecuteSql(sql))
             {
@@ -105,7 +121,7 @@ namespace DotnetAPI.Controllers
             UPDATE TutorialAppSchema.Posts 
                 SET PostTitle = '" + postToEdit.PostTitle +
                 "', PostContent = '" + postToEdit.PostContent +
-                @"', PostUpdated GETDATE()
+                @"', PostUpdated = GETDATE()
                 WHERE PostId = " + postToEdit.PostId.ToString() +
                 "AND UserId =" + this.User.FindFirst("userId")?.Value;
 
@@ -121,7 +137,8 @@ namespace DotnetAPI.Controllers
         public IActionResult DeletePost(int postId)
         {
             string sql = @"DELETE FROM TutorialAppSchema.Posts
-                WHERE PostId = " + postId.ToString();
+                WHERE PostId = " + postId.ToString() +
+                "AND UserId =" + this.User.FindFirst("userId")?.Value;
 
             if (_dapper.ExecuteSql(sql))
             {
@@ -129,5 +146,7 @@ namespace DotnetAPI.Controllers
             }
             throw new Exception("Failed to delete post");
         }
+
+
     }
 }
