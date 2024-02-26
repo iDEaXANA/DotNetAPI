@@ -20,18 +20,6 @@ public class UserSalaryController : ControllerBase
         _dapper = new DataContextDapper(config);
     }
 
-    [HttpGet("GetUserSalary")]
-
-    public IEnumerable<UserSalary> GetUserSalary()
-    {
-        string sql = @"
-                SELECT [UserId],
-                    [Salary]
-                FROM TutorialAppSchema.UserSalary";
-        IEnumerable<UserSalary> UserSalaries = _dapper.LoadData<UserSalary>(sql);
-        return UserSalaries;
-
-    }
 
     [HttpGet("GetSingleUserSalary/{userId}")]
     public UserSalary GetSingleUserSalary(int userId)
