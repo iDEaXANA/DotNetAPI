@@ -19,20 +19,6 @@ public class UserJobInfoController : ControllerBase
         _dapper = new DataContextDapper(config);
     }
 
-    [HttpGet("GetUsersJobInfo")]
-
-    public IEnumerable<UserJobInfo> GetUsersJobInfo()
-    {
-        string sql = @"
-                SELECT [UserId],
-                    [JobTitle],
-                    [Department]
-                FROM TutorialAppSchema.UserJobInfo";
-        IEnumerable<UserJobInfo> userJobInfos = _dapper.LoadData<UserJobInfo>(sql);
-        return userJobInfos;
-
-    }
-
     [HttpGet("GetSingleUserJobInfo/{userId}")]
     public UserJobInfo GetSingleUserJobInfo(int userId)
     {
