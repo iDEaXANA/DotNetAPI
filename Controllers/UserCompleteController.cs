@@ -47,17 +47,22 @@ public class UserCompleteController : ControllerBase
     }
 
 
-    [HttpPut("EditUser")]
-    public IActionResult EditUser(User user)
+    [HttpPut("UpsertUser")]
+    public IActionResult EditUser(UserComplete user)
     {
+
+        //, The following SP consolidates the POST/PUT requests!
         string sql = @"
-        UPDATE TutorialAppSchema.Users
-            SET [FirstName] = '" + user.FirstName +
-                "', [LastName] = '" + user.LastName +
-                "', [Email] = '" + user.Email +
-                "', [Gender] = '" + user.Gender +
-                "', [Active] = '" + user.Active +
-            "' WHERE UserId = " + user.UserId;
+        EXEC TutorialAppSchema.spUser_Upsert
+                @FirstName = '" + user.FirstName +
+                "', @LastName = '" + user.LastName +
+                "', @Email = '" + user.Email +
+                "', @Gender = '" + user.Gender +
+                "', @Active = '" + user.Active +
+                "', @JobTitle = '" + user.JobTitle +
+                "', @Department = '" + user.Department +
+                "', @Salary = '" + user.Salary +
+                "',  @UserId = " + user.UserId;
 
         Console.WriteLine(sql);
 
@@ -70,38 +75,12 @@ public class UserCompleteController : ControllerBase
 
     }
 
-    [HttpPost("AddUser")]
-    public IActionResult AddUser(UserToAddDTO user)
-    {
-        string sql = @"INSERT INTO TutorialAppSchema.Users(
-                [FirstName],
-                [LastName],
-                [Email],
-                [Gender],
-                [Active]
-            ) VALUES (" +
-                "'" + user.FirstName +
-                "', '" + user.LastName +
-                "', '" + user.Email +
-                "', '" + user.Gender +
-                "', '" + user.Active +
-            "')";
-
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-
-        throw new Exception("Failed to Add User");
-    }
-
-
     [HttpDelete("DeleteUser/{userId}")]
     public IActionResult DeleteUser(int userId)
     {
         string sql = @"
-        DELETE FROM TutorialAppSchema.Users 
-            WHERE UserId = " + userId.ToString();
+        EXEC TutorialAppSchema.spUser_Delete
+        @UserId = " + userId.ToString();
 
         Console.WriteLine(sql);
 
