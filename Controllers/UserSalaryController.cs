@@ -33,40 +33,6 @@ public class UserSalaryController : ControllerBase
         return userSalary;
     }
 
-    [HttpPut("EditUserSalary")]
-    public IActionResult EditUserSalary(UserSalary UserSalary)
-    {
-        string sql = @"
-            UPDATE TutorialAppSchema.UserSalary
-                SET [Salary] = '" + UserSalary.Salary +
-            "' WHERE UserId = " + UserSalary.UserId;
-
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-
-        throw new Exception("Failed to Update User's Salary");
-
-    }
-
-    [HttpPost("AddUserSalary")]
-    public IActionResult AddUserSalary(UserSalaryToAddDTO UserSalary)
-    {
-        string sql = @"INSERT INTO TutorialAppSchema.UserSalary(
-                    [Salary]
-                ) VALUES (" +
-                "'" + UserSalary.Salary +
-            "')";
-
-        if (_dapper.ExecuteSqlWithRowCount(sql) > 0)
-        {
-            return Ok();
-        }
-
-        throw new Exception("Failed to Add User's Salary");
-    }
-
     [HttpDelete("DeleteUserSalary/{userId}")]
     public IActionResult DeleteUserSalary(int userId)
     {

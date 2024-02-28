@@ -32,43 +32,6 @@ public class UserJobInfoController : ControllerBase
         return userJobInfo;
     }
 
-    [HttpPut("EditUserJobInfo")]
-    public IActionResult EditUserJobInfo(UserJobInfo userJobInfo)
-    {
-        string sql = @"
-            UPDATE TutorialAppSchema.UserJobInfo
-                SET [JobTitle] = '" + userJobInfo.JobTitle +
-                "', [Department] = '" + userJobInfo.Department +
-            "' WHERE UserId = " + userJobInfo.UserId;
-
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-
-        throw new Exception("Failed to Update User's Job Info");
-
-    }
-
-    [HttpPost("AddUserJobInfo")]
-    public IActionResult AddUserJobInfo(UserJobInfoToAddDTO userJobInfo)
-    {
-        string sql = @"INSERT INTO TutorialAppSchema.UserJobInfo(
-                    [JobTitle],
-                    [Department]
-                ) VALUES (" +
-                "'" + userJobInfo.JobTitle +
-                "', '" + userJobInfo.Department +
-            "')";
-
-        if (_dapper.ExecuteSql(sql))
-        {
-            return Ok();
-        }
-
-        throw new Exception("Failed to Add User's Job Info");
-    }
-
     [HttpDelete("DeleteUserJobInfo/{userId}")]
     public IActionResult DeleterUserJobInfo(int userId)
     {
