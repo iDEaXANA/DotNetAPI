@@ -23,7 +23,7 @@ namespace DotnetAPI.Controllers
         [HttpGet("Posts/{postId}/{userId}/{searchParam}")]
         public IEnumerable<Post> GetPosts(int postId = 0, int userId = 0, string searchParam = "None")
         {
-            string sql = @"EXEC TutorialAppSchema,spPosts_Get";
+            string sql = @"EXEC TutorialAppSchema.spPosts_Get";
             string parameters = "";
 
             if (postId != 0)
@@ -34,7 +34,7 @@ namespace DotnetAPI.Controllers
             {
                 parameters += ", @userId=" + userId.ToString();
             }
-            if (searchParam != "None")
+            if (searchParam.ToLower() != "none")
             {
                 parameters += ", @SearchValue='" + searchParam + "'"; // DB ADS acronym
             }
@@ -50,14 +50,7 @@ namespace DotnetAPI.Controllers
         [HttpGet("MyPosts")]
         public IEnumerable<Post> GetMyPosts() // Route Paramaters
         {
-            string sql = @"SELECT [PostId],
-                    [UserId],
-                    [PostTitle],
-                    [PostContent],
-                    [PostCreated],
-                    [PostUpdated] 
-                FROM TutorialAppSchema.Posts
-                    WHERE UserId = " + this.User.FindFirst("userId")?.Value;
+            string sql = @"EXEC TutorialAppSchema.spPosts_Get @UserId = " + this.User.FindFirst("userId")?.Value;
 
             return _dapper.LoadData<Post>(sql);
         }
