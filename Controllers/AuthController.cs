@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Dapper;
 using DotnetAPI.Data;
 using DotnetAPI.DTOs;
 using DotnetAPI.Helpers;
@@ -97,12 +98,19 @@ namespace DotnetAPI.Controllers
         [HttpPost("Login")]
         public IActionResult Login(UserForLoginDTO userForLogin)
         {
-            string sqlForHashAndSalt = @"SELECT 
-                [PasswordHash],
-                [PasswordSalt] FROM TutorialAppSchema.Auth WHERE Email = '" + userForLogin.Email + "'";
+            string sqlForHashAndSalt = @"EXEC TutorialAppSchema.spLoginConfirmation_Get 
+            @Email = @EmailParam";
+
+            DynamicParameters sqlParameters = new DynamicParameters();
+
+            // SqlParameter emailParameter = new SqlParameter("@EmailParam", SqlDbType.VarChar);
+            // emailParameter.Value = userForLogin.Email;
+            // sqlParameters.Add(emailParameter);
+
+            sqlParameters.Add("@EmailParam", userForLogin.Email, DbType.String);
 
             UserForLoginConfirmationDTO userForLoginConfirmation = _dapper
-                .LoadDataSingle<UserForLoginConfirmationDTO>(sqlForHashAndSalt);
+                .LoadDataSingleWithParameters<UserForLoginConfirmationDTO>(sqlForHashAndSalt, sqlParameters);
 
             byte[] passwordHash = _authHelper.GetPasswordHash(userForLogin.Password, userForLoginConfirmation.PasswordSalt);
             // if (passwordHash == userForLoginConfirmation.PasswordHash); won't work as they're objects.
