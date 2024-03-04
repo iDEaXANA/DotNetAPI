@@ -41,24 +41,28 @@ namespace DotnetAPI.Data
             return dbConnection.Execute(sql);
         }
 
-        public bool ExecuteSqlWithParameters(string sql, List<SqlParameter> parameters)
+        public bool ExecuteSqlWithParameters(string sql, DynamicParameters parameters)
         {
-            SqlCommand commandWithParams = new SqlCommand(sql);
 
-            foreach (SqlParameter parameter in parameters)
-            {
-                commandWithParams.Parameters.Add(parameter);
-            }
-            SqlConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection")); // Sql instead of IDb to match 3 lines down.
-            dbConnection.Open();
+            IDbConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            return dbConnection.Execute(sql, parameters) > 0;
 
-            commandWithParams.Connection = dbConnection;
+            // SqlCommand commandWithParams = new SqlCommand(sql);
 
-            int rowsAffected = commandWithParams.ExecuteNonQuery(); // doesn't return result set 
+            // foreach (SqlParameter parameter in parameters)
+            // {
+            //     commandWithParams.Parameters.Add(parameter);
+            // }
+            // SqlConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection")); // Sql instead of IDb to match 3 lines down.
+            // dbConnection.Open();
 
-            dbConnection.Close();
+            // commandWithParams.Connection = dbConnection;
 
-            return rowsAffected > 0;
+            // int rowsAffected = commandWithParams.ExecuteNonQuery(); // doesn't return result set 
+
+            // dbConnection.Close();
+
+            // return rowsAffected > 0;
         }
 
         public IEnumerable<T> LoadDataWithParameters<T>(string sql, DynamicParameters parameters) // T allows for all data types.
