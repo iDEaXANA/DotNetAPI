@@ -104,7 +104,9 @@ public class UserCompleteController : ControllerBase
         @UserId =@UserIdParameter";
 
         // Console.WriteLine(sql);
-        DynamicParameters sqlParameters = new DynamicParameters(); sqlParameters.Add("@UserIdParameter", userId, DbType.Int32);
+        DynamicParameters sqlParameters = new DynamicParameters();
+
+        sqlParameters.Add("@UserIdParameter", userId, DbType.Int32);
 
         if (_dapper.ExecuteSqlWithParameters(sql, sqlParameters))
         {
